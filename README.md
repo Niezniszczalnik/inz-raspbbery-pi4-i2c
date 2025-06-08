@@ -38,6 +38,18 @@ python3 /home/filip/Desktop/max30102/odczyt_sensory.py
 
 The server listens on port `8765` and broadcasts a JSON message roughly twice per second containing the latest readings from all sensors. Connect from your application (for example a Unity app running on the BT‑300) using a WebSocket client and process the incoming JSON data.
 
+## Simple HRM example
+
+If you only want to quickly check the heart rate sensor you can run the
+`simple_hrm.py` script:
+
+```bash
+python3 simple_hrm.py
+```
+
+It will print the BPM and SpO₂ values every half second until you press
+`Ctrl+C`.
+
 ## JSON message format
 
 An example message looks like:
@@ -62,8 +74,4 @@ An example message looks like:
 ## Notes
 
 The code was written for a Raspberry Pi 4 running Python 3. Make sure all sensors are properly connected to the I2C bus and have the expected addresses. Some sensors may require calibration or additional configuration depending on the manufacturer documentation.
-The server assumes the BME680 uses address `0x77` (constant `bme680.I2C_ADDR_SECONDARY`).
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+The server assumes the BME680 uses address `0x77` (constant `bme680.I2C_ADDR_SECONDARY`)
