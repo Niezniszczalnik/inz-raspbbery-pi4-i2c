@@ -98,6 +98,7 @@ class SensorServer:
 
         data = {
             "timestamp": timestamp,
+            "hr": hr,
             "spo2": spo2,
             "object_temp": object_temp,
             "ambient_temp": ambient_temp,
