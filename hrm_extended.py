@@ -41,12 +41,12 @@ class ExtendedHeartRateMonitor:
                     if self.print_raw:
                         print(f"{ir}, {red}")
 
-                while len(ir_data) > 100:
+               while len(ir_data) > hrcalc.BUFFER_SIZE:
                     ir_data.pop(0)
                     red_data.pop(0)
 
-                if len(ir_data) == 100:
-                    # Obliczamy tetno i SpO2 z ostatnich 100 probek
+                if len(ir_data) == hrcalc.BUFFER_SIZE:
+                    # Obliczamy tetno i SpO2 z ostatnich probek
                     bpm, valid_bpm, spo2, valid_spo2 = hrcalc.calc_hr_and_spo2(ir_data, red_data)
                     if valid_bpm:
                         bpms.append(bpm)
