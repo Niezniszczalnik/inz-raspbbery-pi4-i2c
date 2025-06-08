@@ -9,7 +9,7 @@ import numpy as np
 class ExtendedHeartRateMonitor:
     """Watek odczytujacy BPM i SpO2 z czujnika"""
 
-    LOOP_TIME = 0.01
+    LOOP_TIME = 0.01  # opoznienie miedzy kolejnymi iteracjami petli
 
     def __init__(self, print_raw: bool = False, print_result: bool = False):
         """Tworzy obiekt i ustawia opcje debugowania"""
@@ -23,12 +23,12 @@ class ExtendedHeartRateMonitor:
     def run_sensor(self):
         """Glowna petla odczytu danych"""
         sensor = MAX30102()
-        ir_data = []
-        red_data = []
-        bpms = []
+        ir_data = []  # surowe wartosci IR
+        red_data = []  # surowe wartosci czerwonego swiatla
+        bpms = []      # bufor ostatnich pomiarow tetna
 
         while not self._thread.stopped:
-            num_bytes = sensor.get_data_present()
+            num_bytes = sensor.get_data_present()  # ile pomiarow czeka w buforze
             if num_bytes > 0:
                 while num_bytes > 0:
                     red, ir = sensor.read_fifo()
@@ -43,6 +43,7 @@ class ExtendedHeartRateMonitor:
                     red_data.pop(0)
 
                 if len(ir_data) == 100:
+                    # Obliczamy tetno i SpO2 z ostatnich 100 probek
                     bpm, valid_bpm, spo2, valid_spo2 = hrcalc.calc_hr_and_spo2(ir_data, red_data)
                     if valid_bpm:
                         bpms.append(bpm)
@@ -58,18 +59,21 @@ class ExtendedHeartRateMonitor:
                     if valid_spo2:
                         self.spo2 = spo2
 
+            # Krotka pauza dla stabilnej pracy watku
             time.sleep(self.LOOP_TIME)
 
         sensor.shutdown()
 
     def start_sensor(self):
         """Uruchamia watek pomiaru"""
+        # Tworzymy i uruchamiamy watek z odczytem czujnika
         self._thread = threading.Thread(target=self.run_sensor)
         self._thread.stopped = False
         self._thread.start()
 
     def stop_sensor(self, timeout: float = 2.0):
         """Zatrzymuje watek pomiaru"""
+        # Sygnal zatrzymania i porzadkowanie danych
         self._thread.stopped = True
         self.bpm = 0
         self.spo2 = 0

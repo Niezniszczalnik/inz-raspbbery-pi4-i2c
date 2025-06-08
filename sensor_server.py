@@ -1,4 +1,5 @@
 # Prosty serwer WebSocket zbierajacy dane z sensorow I2C
+# Skrypt odczytuje parametry z kilku czujnikow i udostepnia je klientom
 import asyncio
 import json
 from datetime import datetime
@@ -9,8 +10,8 @@ from smbus2 import SMBus
 from hrm_extended import ExtendedHeartRateMonitor
 from mlx90614 import MLX90614
 from mpu6050 import mpu6050
-# GreenPonik_BH1750 exposes a module named ``BH1750`` containing the class.
-# Import the class explicitly to avoid treating the module itself as callable.
+# Biblioteka GreenPonik_BH1750 udostepnia klase BH1750 w module o tej samej
+# nazwie, wiec pobieramy ja jawnie.
 from GreenPonik_BH1750.BH1750 import BH1750
 import bme680
 
@@ -18,7 +19,7 @@ import bme680
 class SensorServer:
     # Klasa obsluguje czujniki i wysyla dane do klientow
     def __init__(self, bus=1, host="0.0.0.0", port=8765):
-        # Inicjalizacja sensorow i parametrow polaczenia
+        # Inicjalizacja magistrali I2C oraz parametrow polaczenia WebSocket
         self.bus = SMBus(bus)
         self.host = host
         self.port = port
@@ -26,10 +27,11 @@ class SensorServer:
         self.temp_sensor = MLX90614(bus=self.bus)
         self.motion = mpu6050(0x68)
         self.light = BH1750()
-        # The BME680 on the test setup uses address 0x77
+        # BME680 pracuje pod adresem 0x77
         self.env = bme680.BME680(bme680.I2C_ADDR_SECONDARY)
         self.clients = set()
 
+        # Ustawiamy jakosc pomiaru srodowiskowego
         self.env.set_humidity_oversample(bme680.OS_2X)
         self.env.set_pressure_oversample(bme680.OS_4X)
         self.env.set_temperature_oversample(bme680.OS_8X)
@@ -45,6 +47,7 @@ class SensorServer:
 
     def read_sensors(self):
         """Czyta dane ze wszystkich sensorow"""
+        # Wciskamy pojedyncze pomiary do slownika
         data = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "hr": self.hrm.bpm,
@@ -71,10 +74,12 @@ class SensorServer:
                     await ws.send(message)
                 except websockets.ConnectionClosed:
                     self.clients.remove(ws)
+            # Odczyt wykonywany co pol sekundy
             await asyncio.sleep(0.5)
 
     async def start(self):
         """Uruchamia serwer i watek HRM"""
+        # Startujemy watek czujnika tetna
         self.hrm.start_sensor()
         async with websockets.serve(self.handler, self.host, self.port):
             await self.broadcast()
@@ -84,6 +89,6 @@ class SensorServer:
 if __name__ == "__main__":
     server = SensorServer()
     try:
-        asyncio.run(server.start())
+        asyncio.run(server.start())  # uruchamiamy petle asynchroniczna
     except KeyboardInterrupt:
         pass
