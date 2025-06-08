@@ -47,6 +47,8 @@ class SensorServer:
 
     def read_sensors(self):
         """Czyta dane ze wszystkich sensorow"""
+        # Aktualizujemy odczyt z czujnika srodowiskowego
+        self.env.get_sensor_data()
         # Wciskamy pojedyncze pomiary do slownika
         data = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
