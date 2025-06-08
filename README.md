@@ -75,3 +75,10 @@ An example message looks like:
 
 The code was written for a Raspberry Pi 4 running Python 3. Make sure all sensors are properly connected to the I2C bus and have the expected addresses. Some sensors may require calibration or additional configuration depending on the manufacturer documentation.
 The server assumes the BME680 uses address `0x77` (constant `bme680.I2C_ADDR_SECONDARY`)
+
+## Continuous integration
+
+A simple GitHub Actions workflow installs the dependencies from
+`requirements.txt` and runs `pytest` on a tiny test that imports all
+project modules. This ensures that the sources remain syntactically
+correct and that all imports resolve.
