@@ -1,7 +1,7 @@
 import time
 import warnings
 
-from hrm_extended import ExtendedHeartRateMonitor
+from blood_oxygen_monitor import BloodOxygenMonitor
 
 # Suppress noisy warning on Linux when I2C frequency cannot be changed
 warnings.filterwarnings(
@@ -14,7 +14,7 @@ warnings.filterwarnings(
 
 def main():
     """Continuously print heart rate and SpO2 readings."""
-    hrm = ExtendedHeartRateMonitor()
+    hrm = BloodOxygenMonitor()
     hrm.start_sensor()
     try:
         while True:
@@ -28,3 +28,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
