@@ -81,9 +81,11 @@ class SensorServer:
         """Uruchamia serwer i watek HRM"""
         # Startujemy watek czujnika tetna
         self.hrm.start_sensor()
-        async with websockets.serve(self.handler, self.host, self.port):
-            await self.broadcast()
-        self.hrm.stop_sensor()
+        try:
+            async with websockets.serve(self.handler, self.host, self.port):
+                await self.broadcast()
+        finally:
+            self.hrm.stop_sensor()
 
 
 if __name__ == "__main__":
