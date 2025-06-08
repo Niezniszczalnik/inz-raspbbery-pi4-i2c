@@ -6,11 +6,11 @@ This repository contains a simple Python server for Raspberry Pi 4 that reads a 
 
 ## Supported sensors
 
-- **MAX30102** pulse oximeter and heart‑rate sensor
-- **MLX90614** infrared temperature sensor
-- **MPU6050** 3‑axis accelerometer and gyroscope
-- **BH1750** light sensor
-- **BME680** environmental sensor (temperature, humidity, pressure and gas, address `0x77`)
+- **MAX30102** – pulsoksymetr i czujnik tętna
+- **MLX90614** – bezkontaktowy czujnik temperatury na podczerwień
+- **MPU6050** – inercyjny sensor 6DOF
+- **BH1750** – czujnik natężenia oświetlenia (luxometr)
+- **BME680** – wielofunkcyjny czujnik środowiskowy (domyślnie adres `0x77`)
 
 ## Installation
 
