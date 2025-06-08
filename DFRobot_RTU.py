@@ -460,4 +460,3 @@ class DFRobot_RTU(object):
           #print[package]
           return package
 
-
