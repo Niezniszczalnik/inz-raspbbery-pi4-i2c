@@ -41,10 +41,10 @@ The server listens on port `8765` and broadcasts a JSON message roughly twice pe
 ## Simple HRM example
 
 If you only want to quickly check the heart rate sensor you can run the
-`simple_hrm.py` script:
+`max30102_realtime.py` script:
 
 ```bash
-python3 simple_hrm.py
+python3 max30102_realtime.py
 ```
 
 It will print the BPM and SpO₂ values every half second until you press
