@@ -10,7 +10,7 @@ from smbus2 import SMBus
 
 logger = logging.getLogger(__name__)
 
-from hrm_extended import ExtendedHeartRateMonitor
+from blood_oxygen_monitor import BloodOxygenMonitor
 from mlx90614 import MLX90614
 from mpu6050 import mpu6050
 
@@ -27,7 +27,7 @@ class SensorServer:
         self.bus = SMBus(bus)
         self.host = host
         self.port = port
-        self.hrm = ExtendedHeartRateMonitor()
+        self.hrm = BloodOxygenMonitor()
         self.temp_sensor = MLX90614(bus=self.bus)
         self.motion = mpu6050(0x68)
         self.light = BH1750()
@@ -52,7 +52,7 @@ class SensorServer:
     def read_sensors(self):
         """Czyta dane ze wszystkich sensorow"""
         timestamp = datetime.utcnow().isoformat() + "Z"
-
+        
         # Heart rate monitor values do not raise OSError
         hr = self.hrm.bpm
         spo2 = self.hrm.spo2
