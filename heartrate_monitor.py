@@ -53,7 +53,10 @@ class HeartRateMonitor(object):
                         while len(bpms) > 4:
                             bpms.pop(0)
                         self.bpm = np.mean(bpms)
-                        if (np.mean(ir_data) < 50000 and np.mean(red_data) < 50000):
+                        if (
+                            np.mean(ir_data) < FINGER_DETECT_THRESHOLD
+                            and np.mean(red_data) < FINGER_DETECT_THRESHOLD
+                        ):
                             self.bpm = 0
                             if self.print_result:
                                 print("Finger not detected")
