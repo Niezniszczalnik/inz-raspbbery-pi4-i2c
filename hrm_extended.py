@@ -5,6 +5,9 @@ import threading
 import time
 import numpy as np
 
+# Minimal average signal level required to treat a reading as valid
+FINGER_DETECT_THRESHOLD = 10000
+
 
 class ExtendedHeartRateMonitor:
     """Watek odczytujacy BPM i SpO2 z czujnika"""
