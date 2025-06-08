@@ -47,10 +47,9 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
             self.__uart_i2c = I2C_MODE
         else:
             super(DFRobot_BloodOxygen_S, self).__init__(Baud, 8, 'N', 1)
-            # self.ser = serial.Serial("/dev/ttyAMA0" ,baudrate=Baud,stopbits=1, timeout=0.5)
             self.__uart_i2c = UART_MODE
-            if not self.ser.isOpen:
-                self.ser.open()
+            if not self._ser.is_open:
+                self._ser.open()
 
     def begin(self):
         '''!
