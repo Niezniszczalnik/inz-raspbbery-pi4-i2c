@@ -9,7 +9,7 @@ class BloodOxygenMonitor:
     LOOP_TIME = 0.2
 
     def __init__(self, bus: int = 1, address: int = 0x20) -> None:
-        self.sensor = DFRobot_BloodOxygen_S_i2c(bus, address)
+        self.sensor = DFRobot_BloodOxygen_S_i2c(bus, address=0x57)
         if not self.sensor.begin():
             raise RuntimeError("Failed to initialize the blood oxygen sensor")
         self.bpm = 0
