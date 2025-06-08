@@ -10,6 +10,7 @@ from smbus2 import SMBus
 from hrm_extended import ExtendedHeartRateMonitor
 from mlx90614 import MLX90614
 from mpu6050 import mpu6050
+
 # Biblioteka GreenPonik_BH1750 udostepnia klase BH1750 w module o tej samej
 # nazwie, wiec pobieramy ja jawnie.
 from GreenPonik_BH1750.BH1750 import BH1750
@@ -79,7 +80,7 @@ class SensorServer:
             # Odczyt wykonywany co pol sekundy
             await asyncio.sleep(0.5)
 
-  async def start(self):
+    async def start(self):
         """Uruchamia serwer i watek HRM"""
         # Startujemy watek czujnika tetna
         self.hrm.start_sensor()
