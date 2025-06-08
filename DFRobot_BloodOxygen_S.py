@@ -33,13 +33,13 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
     pheartbeat = 0
     START_MODE = 2
     END_MODE = 3
-    BAUT_RATE_1200 = 0
-    BAUT_RATE_2400 = 1
-    BAUT_RATE_9600 = 3
-    BAUT_RATE_19200 = 5
-    BAUT_RATE_38400 = 6
-    BAUT_RATE_57600 = 7
-    BAUT_RATE_115200 = 8
+    BAUD_RATE_1200 = 0
+    BAUD_RATE_2400 = 1
+    BAUD_RATE_9600 = 3
+    BAUD_RATE_19200 = 5
+    BAUD_RATE_38400 = 6
+    BAUD_RATE_57600 = 7
+    BAUD_RATE_115200 = 8
 
     def __init__(self, bus, Baud):
         if bus != 0:
@@ -79,19 +79,19 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
         wbuf = [0x00, 0x02]
         self.write_reg(0x20, wbuf)
 
-    def set_bautrate(self, bautrate):
+    def set_baudrate(self, baudrate):
         '''!
           @brief   Change serial baud rate
-          @param bautrate
-          @n     BAUT_RATE_1200
-          @n     BAUT_RATE_2400
-          @n     BAUT_RATE_9600
-          @n     BAUT_RATE_19200
-          @n     BAUT_RATE_38400
-          @n     BAUT_RATE_57600
-          @n     BAUT_RATE_115200
+          @param baudrate
+          @n     BAUD_RATE_1200
+          @n     BAUD_RATE_2400
+          @n     BAUD_RATE_9600
+          @n     BAUD_RATE_19200
+          @n     BAUD_RATE_38400
+          @n     BAUD_RATE_57600
+          @n     BAUD_RATE_115200
         '''
-        w_buf = [0, bautrate]
+        w_buf = [0, baudrate]
         self.write_reg(0x1C, w_buf)
 
     def get_heartbeat_SPO2(self):
@@ -121,7 +121,7 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
         Temperature = temp_buf[0] * 1.0 + temp_buf[1] / 100.0
         return Temperature
 
-    def get_bautrate(self):
+  def get_baudrate(self):
         '''!
           @brief   Get serial baud rate of the sensor
           @return  Return serial baud rate of the sensor
