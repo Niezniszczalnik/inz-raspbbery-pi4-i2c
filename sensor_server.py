@@ -79,12 +79,14 @@ class SensorServer:
             # Odczyt wykonywany co pol sekundy
             await asyncio.sleep(0.5)
 
-    async def start(self):
-        """Uruchamia serwer i watek HRM"""
-        # Startujemy watek czujnika tetna
-        self.hrm.start_sensor()
+   async def start(self):
+    """Uruchamia serwer i watek HRM"""
+    # Startujemy watek czujnika tetna
+    self.hrm.start_sensor()
+    try:
         async with websockets.serve(self.handler, self.host, self.port):
             await self.broadcast()
+    finally:
         self.hrm.stop_sensor()
 
 
