@@ -116,7 +116,7 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
       @return  Return board temp
     '''
     temp_buf = self.read_reg(0x14, 2)
-    Temperature = temp_buf[0] * 1.0 + temp_buf[1] / 100.0
+    Temperature = temp_buf[0] * 1.0 + temp_buf[0] / 100.0
     return Temperature
 
   def get_bautrate(self):
@@ -204,4 +204,4 @@ class DFRobot_BloodOxygen_S_uart(DFRobot_BloodOxygen_S):
   def read_reg(self, reg_addr ,length):
     return self.read_holding_registers(0x20,int(math.ceil(reg_addr/2)),int(math.ceil(length/2)))[1:]
 
- 
+       
