@@ -64,7 +64,11 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
     rbuf = self.read_reg(0x04, 2)
     if not isinstance(rbuf, (list, tuple)) or len(rbuf) < 2:
         return False
-    if (rbuf[0] & 0xff << 8 | rbuf[1]) == DEV_ADDRESS:
+    # Combine the two bytes returned from the sensor into a 16-bit value.
+    # The original implementation used bitwise AND with a shifted mask which
+    # effectively discarded the high byte. This resulted in false negatives
+    # on initialization when the sensor returned a non-zero high byte.
+    if ((rbuf[0] << 8) | rbuf[1]) == DEV_ADDRESS:
         return True
     return False
 
