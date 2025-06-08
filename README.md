@@ -36,6 +36,15 @@ elsewhere):
 python3 /home/filip/Desktop/max30102/odczyt_sensory.py
 ```
 
+The `BloodOxygenMonitor` class will automatically scan common I2C addresses
+(0x57, 0x56, 0x55) and pick the first sensor that responds.  If your module uses
+a different address you can pass it explicitly:
+
+```python
+from blood_oxygen_monitor import BloodOxygenMonitor
+monitor = BloodOxygenMonitor(address=0x57)
+```
+
 The server listens on port `8765` and broadcasts a JSON message roughly twice per second containing the latest readings from all sensors. Connect from your application (for example a Unity app running on the BT‑300) using a WebSocket client and process the incoming JSON data.
 
 ## Simple HRM example
