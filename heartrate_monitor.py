@@ -4,6 +4,9 @@ import threading
 import time
 import numpy as np
 
+# Minimal average signal level required to consider the finger present
+FINGER_DETECT_THRESHOLD = 10000
+
 
 class HeartRateMonitor(object):
     """
