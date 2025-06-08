@@ -1,0 +1,9 @@
+# Python dependencies for running the sensor server
+# DFRobot_BloodOxygen_S driver is vendored and does not need installation
+smbus2
+numpy
+websockets
+PyMLX90614
+mpu6050-raspberrypi
+bme680
+GreenPonik-BH1750
