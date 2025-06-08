@@ -2,10 +2,13 @@
 # Skrypt odczytuje parametry z kilku czujnikow i udostepnia je klientom
 import asyncio
 import json
+import logging
 from datetime import datetime
 
 import websockets
 from smbus2 import SMBus
+
+logger = logging.getLogger(__name__)
 
 from hrm_extended import ExtendedHeartRateMonitor
 from mlx90614 import MLX90614
@@ -48,22 +51,63 @@ class SensorServer:
 
     def read_sensors(self):
         """Czyta dane ze wszystkich sensorow"""
-        # Aktualizujemy odczyt z czujnika srodowiskowego
-        self.env.get_sensor_data()
-        # Wciskamy pojedyncze pomiary do slownika
-        data = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "hr": self.hrm.bpm,
-            "spo2": self.hrm.spo2,
-            "object_temp": self.temp_sensor.get_obj_temp(),
-            "ambient_temp": self.temp_sensor.get_amb_temp(),
-            "accel": self.motion.get_accel_data(),
-            "gyro": self.motion.get_gyro_data(),
-            "lux": self.light.read_bh1750(),
-            "temperature": self.env.data.temperature,
-            "pressure": self.env.data.pressure,
-            "humidity": self.env.data.humidity,
-            "gas_resistance": self.env.data.gas_resistance,
+        timestamp = datetime.utcnow().isoformat() + "Z"
+
+        # Heart rate monitor values do not raise OSError
+        hr = self.hrm.bpm
+        spo2 = self.hrm.spo2
+
+        try:
+            object_temp = self.temp_sensor.get_obj_temp()
+            ambient_temp = self.temp_sensor.get_amb_temp()
+        except OSError as exc:
+            logger.warning("MLX90614 read failed: %s", exc)
+            object_temp = None
+            ambient_temp = None
+
+        try:
+            accel = self.motion.get_accel_data()
+        except OSError as exc:
+            logger.warning("MPU6050 accel read failed: %s", exc)
+            accel = {"x": 0, "y": 0, "z": 0}
+
+        try:
+            gyro = self.motion.get_gyro_data()
+        except OSError as exc:
+            logger.warning("MPU6050 gyro read failed: %s", exc)
+            gyro = {"x": 0, "y": 0, "z": 0}
+
+        try:
+            lux = self.light.read_bh1750()
+        except OSError as exc:
+            logger.warning("BH1750 read failed: %s", exc)
+            lux = None
+
+        try:
+            self.env.get_sensor_data()
+            temperature = self.env.data.temperature
+            pressure = self.env.data.pressure
+            humidity = self.env.data.humidity
+            gas_resistance = self.env.data.gas_resistance
+        except OSError as exc:
+            logger.warning("BME680 read failed: %s", exc)
+            temperature = None
+            pressure = None
+            humidity = None
+            gas_resistance = None
+
+                   "timestamp": timestamp,
+            "hr": hr,
+            "spo2": spo2,
+            "object_temp": object_temp,
+            "ambient_temp": ambient_temp,
+            "accel": accel,
+            "gyro": gyro,
+            "lux": lux,
+            "temperature": temperature,
+            "pressure": pressure,
+            "humidity": humidity,
+            "gas_resistance": gas_resistance,
         }
         return data
 
@@ -89,11 +133,3 @@ class SensorServer:
                 await self.broadcast()
         finally:
             self.hrm.stop_sensor()
-
-
-if __name__ == "__main__":
-    server = SensorServer()
-    try:
-        asyncio.run(server.start())  # uruchamiamy petle asynchroniczna
-    except KeyboardInterrupt:
-        pass
