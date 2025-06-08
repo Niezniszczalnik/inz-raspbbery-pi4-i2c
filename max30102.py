@@ -95,10 +95,10 @@ class MAX30102():
 
         # choose value for ~7mA for LED1
         self.bus.write_i2c_block_data(self.address, REG_LED1_PA, [0x24])
+        # choose value for ~7mA for LED1
+        self.bus.write_i2c_block_data(self.address, REG_LED1_PA, [0x24])
         # choose value for ~7mA for LED2
         self.bus.write_i2c_block_data(self.address, REG_LED2_PA, [0x24])
-        # choose value fro ~25mA for Pilot LED
-        self.bus.write_i2c_block_data(self.address, REG_PILOT_PA, [0x7f])
 
     # this won't validate the arguments!
     # use when changing the values from default
