@@ -55,19 +55,19 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
 
   def begin(self):
     '''!
-      @brief   Begin function, check sensor connection status
-      @return  Return init status
-      @retval True Init succeeded
-      @retval False Init failed
+        @brief   Begin function, check sensor connection status
+        @return  Return init status
+        @retval True Init succeeded
+        @retval False Init failed
     '''
     global DEV_ADDRESS
-    rbuf = self.read_reg(0x04,2)
-      if not isinstance(rbuf, (list, tuple)) or len(rbuf) < 2:
-      return False
+    rbuf = self.read_reg(0x04, 2)
+    if not isinstance(rbuf, (list, tuple)) or len(rbuf) < 2:
+        return False
     if (rbuf[0] & 0xff << 8 | rbuf[1]) == DEV_ADDRESS:
-      return True
-    else:
-      return False
+        return True
+    return False
+
 
   def sensor_start_collect(self):
     '''!
