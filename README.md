@@ -24,9 +24,8 @@ This repository contains a simple Python server for Raspberry Pi 4 that reads a 
      pip install smbus2 numpy websockets PyMLX90614 mpu6050-raspberrypi bme680 GreenPonik-BH1750
    ```
    The repository now vendors the DFRobot_BloodOxygen_S driver for the SEN0518 module
-   (`DFRobot_BloodOxygen_S.py` and `DFRobot_RTU.py`). The `hrm_extended.py` helper
-   uses this driver to obtain BPM and SpO₂ values for the WebSocket server
-   started from `odczyt_sensory.py`.
+   (`DFRobot_BloodOxygen_S.py` and `DFRobot_RTU.py`). Heart rate and SpO₂ values
+   are obtained directly using this driver in `sensor_server.py`.
 
 ## Usage
 
