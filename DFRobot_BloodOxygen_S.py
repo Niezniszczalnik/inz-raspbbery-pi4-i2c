@@ -62,6 +62,8 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
     '''
     global DEV_ADDRESS
     rbuf = self.read_reg(0x04,2)
+      if not isinstance(rbuf, (list, tuple)) or len(rbuf) < 2:
+      return False
     if (rbuf[0] & 0xff << 8 | rbuf[1]) == DEV_ADDRESS:
       return True
     else:
