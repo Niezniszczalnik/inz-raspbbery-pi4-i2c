@@ -24,9 +24,9 @@ DEVICE_ADDRESS = 0x20
 
 
 class DFRobot_BloodOxygen_S(DFRobot_RTU):
-  '''!
-    @brief This is the base class of the heart rate and oximeter sensor.
-  '''
+    '''!
+      @brief This is the base class of the heart rate and oximeter sensor.
+    '''
     SPO2 = 0
     heartbeat = 0
     pSPO2 = 0
@@ -52,50 +52,7 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
                 self._ser.open()
 
     def begin(self):
-        '''!
-          @brief   Begin function, check sensor connection status
-          @return  Return init status
-          @retval True Init succeeded
-          @retval False Init failed
-        '''
-        global DEV_ADDRESS
-        rbuf = self.read_reg(0x04, 2)
-        if (rbuf[0] & 0xff << 8 | rbuf[1]) == DEV_ADDRESS:
-            return True
-        else:
-            return False
-
-    def sensor_start_collect(self):
-        '''!
-          @brief   Sensor starts to collect data
-        '''
-        wbuf = [0x00, 0x01]
-        self.write_reg(0x20, wbuf)
-
-    def sensor_end_collect(self):
-        '''!
-          @brief   Sensor ended collecting data
-        '''
-        wbuf = [0x00, 0x02]
-        self.write_reg(0x20, wbuf)
-
-    def set_baudrate(self, baudrate):
-        '''!
-          @brief   Change serial baud rate
-          @param baudrate
-          @n     BAUD_RATE_1200
-          @n     BAUD_RATE_2400
-          @n     BAUD_RATE_9600
-          @n     BAUD_RATE_19200
-          @n     BAUD_RATE_38400
-          @n     BAUD_RATE_57600
-          @n     BAUD_RATE_115200
-        '''
-        w_buf = [0, baudrate]
-        self.write_reg(0x1C, w_buf)
-
-    def get_heartbeat_SPO2(self):
-        '''!
+@@ -99,51 +99,51 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
           @brief Get heart rate and oxygen saturation and store them into the struct  sHeartbeatSPO2
         '''
         rbuf = self.read_reg(0x0C, 8)
@@ -121,7 +78,11 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
         Temperature = temp_buf[0] * 1.0 + temp_buf[1] / 100.0
         return Temperature
 
-  def get_baudrate(self):
+    def get_baudrate(self):
+        '''!
+          @brief   Get serial baud rate of the sensor
+          @return  Return serial baud rate of the sensor
+        '''
         '''!
           @brief   Get serial baud rate of the sensor
           @return  Return serial baud rate of the sensor
