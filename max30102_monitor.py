@@ -2,7 +2,7 @@ import time
 import warnings
 import argparse
 
-from hrm_extended import ExtendedHeartRateMonitor
+from blood_oxygen_monitor import BloodOxygenMonitor
 
 warnings.filterwarnings(
     "ignore",
@@ -22,7 +22,9 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    hrm = ExtendedHeartRateMonitor(print_raw=args.raw, print_result=not args.raw)
+    hrm = BloodOxygenMonitor()
+    if args.raw:
+        print("Raw output not supported with this sensor")
     hrm.start_sensor()
     try:
         while True:
