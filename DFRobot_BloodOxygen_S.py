@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 '''!
   @file DFRobot_BloodOxygen_S.py
   @brief This is the python library for the sensor that can detect human oxygen saturation and heart rate.
@@ -14,8 +14,6 @@ import serial
 import time
 import smbus
 import os
-import math
-import RPi.GPIO as GPIO
 import math
 from DFRobot_RTU import *
 
@@ -116,7 +114,7 @@ class DFRobot_BloodOxygen_S(DFRobot_RTU):
       @return  Return board temp
     '''
     temp_buf = self.read_reg(0x14, 2)
-    Temperature = temp_buf[0] * 1.0 + temp_buf[0] / 100.0
+    Temperature = temp_buf[0] * 1.0 + temp_buf[1] / 100.0
     return Temperature
 
   def get_bautrate(self):
