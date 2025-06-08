@@ -1,3 +1,4 @@
+# Rozszerzony monitor tetna oparty na bibliotece MAX30102
 from max30102 import MAX30102
 import hrcalc
 import threading
@@ -6,11 +7,12 @@ import numpy as np
 
 
 class ExtendedHeartRateMonitor:
-    """Threaded monitor that tracks BPM and SpO2."""
+    """Watek odczytujacy BPM i SpO2 z czujnika"""
 
     LOOP_TIME = 0.01
 
     def __init__(self, print_raw: bool = False, print_result: bool = False):
+        """Tworzy obiekt i ustawia opcje debugowania"""
         self.bpm = 0
         self.spo2 = 0
         if print_raw:
@@ -19,6 +21,7 @@ class ExtendedHeartRateMonitor:
         self.print_result = print_result
 
     def run_sensor(self):
+        """Glowna petla odczytu danych"""
         sensor = MAX30102()
         ir_data = []
         red_data = []
@@ -60,11 +63,13 @@ class ExtendedHeartRateMonitor:
         sensor.shutdown()
 
     def start_sensor(self):
+        """Uruchamia watek pomiaru"""
         self._thread = threading.Thread(target=self.run_sensor)
         self._thread.stopped = False
         self._thread.start()
 
     def stop_sensor(self, timeout: float = 2.0):
+        """Zatrzymuje watek pomiaru"""
         self._thread.stopped = True
         self.bpm = 0
         self.spo2 = 0

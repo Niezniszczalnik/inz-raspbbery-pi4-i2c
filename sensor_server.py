@@ -1,3 +1,4 @@
+# Prosty serwer WebSocket zbierajacy dane z sensorow I2C
 import asyncio
 import json
 from datetime import datetime
@@ -15,7 +16,9 @@ import bme680
 
 
 class SensorServer:
+    # Klasa obsluguje czujniki i wysyla dane do klientow
     def __init__(self, bus=1, host="0.0.0.0", port=8765):
+        # Inicjalizacja sensorow i parametrow polaczenia
         self.bus = SMBus(bus)
         self.host = host
         self.port = port
@@ -33,6 +36,7 @@ class SensorServer:
         self.env.set_filter(bme680.FILTER_SIZE_3)
 
     async def handler(self, websocket):
+        """Obsluga pojedynczego klienta WebSocket"""
         self.clients.add(websocket)
         try:
             await websocket.wait_closed()
@@ -40,6 +44,7 @@ class SensorServer:
             self.clients.remove(websocket)
 
     def read_sensors(self):
+        """Czyta dane ze wszystkich sensorow"""
         data = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "hr": self.hrm.bpm,
@@ -57,6 +62,7 @@ class SensorServer:
         return data
 
     async def broadcast(self):
+        """Wysyla pomiary do wszystkich klientow"""
         while True:
             data = self.read_sensors()
             message = json.dumps(data)
@@ -68,6 +74,7 @@ class SensorServer:
             await asyncio.sleep(0.5)
 
     async def start(self):
+        """Uruchamia serwer i watek HRM"""
         self.hrm.start_sensor()
         async with websockets.serve(self.handler, self.host, self.port):
             await self.broadcast()
