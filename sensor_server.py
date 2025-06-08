@@ -96,8 +96,8 @@ class SensorServer:
             humidity = None
             gas_resistance = None
 
-                   "timestamp": timestamp,
-            "hr": hr,
+        data = {
+            "timestamp": timestamp,
             "spo2": spo2,
             "object_temp": object_temp,
             "ambient_temp": ambient_temp,
