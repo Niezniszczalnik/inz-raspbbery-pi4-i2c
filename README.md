@@ -21,8 +21,8 @@ This repository contains a simple Python server for Raspberry Pi 4 that reads a 
    ```bash
    pip install smbus2 numpy websockets PyMLX90614 mpu6050-raspberrypi bme680 GreenPonik-BH1750
    ```
-   The repository also vendors a simple MAX30102 driver (`max30102.py`) and heart rate monitor helper (`heartrate_monitor.py`).
-   The main script `odczyt_sensory.py` imports these modules and starts the WebSocket server.
+   The repository also vendors a simple MAX30102 driver (`max30102.py`) and the original heart rate monitor helper (`heartrate_monitor.py`).
+   A small wrapper (`hrm_extended.py`) adds SpO₂ tracking and is used by the WebSocket server started from `odczyt_sensory.py`.
 
 ## Usage
 

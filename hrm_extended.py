@@ -1,4 +1,3 @@
-
 from max30102 import MAX30102
 import hrcalc
 import threading
@@ -6,17 +5,16 @@ import time
 import numpy as np
 
 
-class HeartRateMonitor(object):
-    """
-    A class that encapsulates the max30102 device into a thread
-    """
+class ExtendedHeartRateMonitor:
+    """Threaded monitor that tracks BPM and SpO2."""
 
     LOOP_TIME = 0.01
 
-    def __init__(self, print_raw=False, print_result=False):
+    def __init__(self, print_raw: bool = False, print_result: bool = False):
         self.bpm = 0
-        if print_raw is True:
-            print('IR, Red')
+        self.spo2 = 0
+        if print_raw:
+            print("IR, Red")
         self.print_raw = print_raw
         self.print_result = print_result
 
@@ -26,19 +24,16 @@ class HeartRateMonitor(object):
         red_data = []
         bpms = []
 
-        # run until told to stop
         while not self._thread.stopped:
-            # check if any data is available
             num_bytes = sensor.get_data_present()
             if num_bytes > 0:
-                # grab all the data and stash it into arrays
                 while num_bytes > 0:
                     red, ir = sensor.read_fifo()
                     num_bytes -= 1
                     ir_data.append(ir)
                     red_data.append(red)
                     if self.print_raw:
-                        print("{0}, {1}".format(ir, red))
+                        print(f"{ir}, {red}")
 
                 while len(ir_data) > 100:
                     ir_data.pop(0)
@@ -56,7 +51,9 @@ class HeartRateMonitor(object):
                             if self.print_result:
                                 print("Finger not detected")
                         if self.print_result:
-                            print("BPM: {0}, SpO2: {1}".format(self.bpm, spo2))
+                            print(f"BPM: {self.bpm}, SpO2: {spo2}")
+                    if valid_spo2:
+                        self.spo2 = spo2
 
             time.sleep(self.LOOP_TIME)
 
@@ -67,7 +64,8 @@ class HeartRateMonitor(object):
         self._thread.stopped = False
         self._thread.start()
 
-    def stop_sensor(self, timeout=2.0):
+    def stop_sensor(self, timeout: float = 2.0):
         self._thread.stopped = True
         self.bpm = 0
+        self.spo2 = 0
         self._thread.join(timeout)

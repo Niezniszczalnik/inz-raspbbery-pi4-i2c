@@ -5,7 +5,7 @@ from datetime import datetime
 import websockets
 from smbus2 import SMBus
 
-from heartrate_monitor import HeartRateMonitor
+from hrm_extended import ExtendedHeartRateMonitor
 from mlx90614 import MLX90614
 from mpu6050 import mpu6050
 # GreenPonik_BH1750 exposes a module named ``BH1750`` containing the class.
@@ -19,7 +19,7 @@ class SensorServer:
         self.bus = SMBus(bus)
         self.host = host
         self.port = port
-        self.hrm = HeartRateMonitor()
+        self.hrm = ExtendedHeartRateMonitor()
         self.temp_sensor = MLX90614(bus=self.bus)
         self.motion = mpu6050(0x68)
         self.light = BH1750()
