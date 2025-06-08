@@ -7,3 +7,4 @@ PyMLX90614
 mpu6050-raspberrypi
 bme680
 GreenPonik-BH1750
+pyserial
