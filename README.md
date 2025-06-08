@@ -21,10 +21,12 @@ This repository contains a simple Python server for Raspberry Pi 4 that reads a 
    ```
 3. Install Python dependencies (preferably inside a virtual environment):
    ```bash
-   pip install smbus2 numpy websockets PyMLX90614 mpu6050-raspberrypi bme680 GreenPonik-BH1750
+     pip install smbus2 numpy websockets PyMLX90614 mpu6050-raspberrypi bme680 GreenPonik-BH1750
    ```
-   The repository also vendors a simple MAX30102 driver (`max30102.py`) and the original heart rate monitor helper (`heartrate_monitor.py`).
-   A small wrapper (`hrm_extended.py`) adds SpO₂ tracking and is used by the WebSocket server started from `odczyt_sensory.py`.
+   The repository now vendors the DFRobot_BloodOxygen_S driver for the SEN0518 module
+   (`DFRobot_BloodOxygen_S.py` and `DFRobot_RTU.py`). The `hrm_extended.py` helper
+   uses this driver to obtain BPM and SpO₂ values for the WebSocket server
+   started from `odczyt_sensory.py`.
 
 ## Usage
 
