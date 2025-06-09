@@ -80,7 +80,7 @@ class SensorServer:
             )
             await websocket.send(info)
             await websocket.wait_closed()
-        finally:
+                    finally:
             self.clients.remove(websocket)
 
     def read_sensors(self):
@@ -104,7 +104,33 @@ class SensorServer:
         except OSError as exc:
             logger.warning("MPU6050 accel read failed: %s", exc)
             accel = {"x": 0, "y": 0, "z": 0}
-@@ -98,39 +132,43 @@ class SensorServer:
+    
+        try:
+            gyro = self.motion.get_gyro_data()
+        except OSError as exc:
+            logger.warning("MPU6050 gyro read failed: %s", exc)
+            gyro = {"x": 0, "y": 0, "z": 0}
+
+        try:
+            lux = self.light.read_bh1750()
+        except OSError as exc:
+            logger.warning("BH1750 read failed: %s", exc)
+            lux = None
+
+        try:
+            self.env.get_sensor_data()
+            temperature = self.env.data.temperature
+            pressure = self.env.data.pressure
+            humidity = self.env.data.humidity
+            gas_resistance = self.env.data.gas_resistance
+        except OSError as exc:
+            logger.warning("BME680 read failed: %s", exc)
+            temperature = None
+            pressure = None
+            humidity = None
+            gas_resistance = None
+
+        data = {
 
         data = {
             "timestamp": timestamp,
