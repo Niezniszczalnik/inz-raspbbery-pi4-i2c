@@ -4,9 +4,32 @@ import asyncio
 import json
 import logging
 from datetime import datetime
+import socket
+import subprocess
 
 import websockets
 from smbus2 import SMBus
+
+
+def get_local_ip() -> str:
+    """Return the best-effort local IP address."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        sock.connect(("8.8.8.8", 80))
+        ip = sock.getsockname()[0]
+    except OSError:
+        ip = "unknown"
+    finally:
+        sock.close()
+    return ip
+
+
+def get_wifi_ssid() -> str:
+    """Return the Wi-Fi SSID if available."""
+    try:
+        return subprocess.check_output(["iwgetid", "-r"], text=True).strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return ""
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +50,8 @@ class SensorServer:
         self.bus = SMBus(bus)
         self.host = host
         self.port = port
+        self.ip_address = get_local_ip()
+        self.wifi_ssid = get_wifi_ssid()
         self.hrm = BloodOxygenMonitor()
         self.temp_sensor = MLX90614(bus=self.bus)
         self.motion = mpu6050(0x68)
@@ -45,6 +70,15 @@ class SensorServer:
         """Obsluga pojedynczego klienta WebSocket"""
         self.clients.add(websocket)
         try:
+            info = json.dumps(
+                {
+                    "type": "info",
+                    "ip": self.ip_address,
+                    "wifi": self.wifi_ssid,
+                    "message": "Serwer WebSocket uruchomiony",
+                }
+            )
+            await websocket.send(info)
             await websocket.wait_closed()
         finally:
             self.clients.remove(websocket)
@@ -70,31 +104,7 @@ class SensorServer:
         except OSError as exc:
             logger.warning("MPU6050 accel read failed: %s", exc)
             accel = {"x": 0, "y": 0, "z": 0}
-
-        try:
-            gyro = self.motion.get_gyro_data()
-        except OSError as exc:
-            logger.warning("MPU6050 gyro read failed: %s", exc)
-            gyro = {"x": 0, "y": 0, "z": 0}
-
-        try:
-            lux = self.light.read_bh1750()
-        except OSError as exc:
-            logger.warning("BH1750 read failed: %s", exc)
-            lux = None
-
-        try:
-            self.env.get_sensor_data()
-            temperature = self.env.data.temperature
-            pressure = self.env.data.pressure
-            humidity = self.env.data.humidity
-            gas_resistance = self.env.data.gas_resistance
-        except OSError as exc:
-            logger.warning("BME680 read failed: %s", exc)
-            temperature = None
-            pressure = None
-            humidity = None
-            gas_resistance = None
+@@ -98,39 +132,43 @@ class SensorServer:
 
         data = {
             "timestamp": timestamp,
@@ -120,6 +130,7 @@ class SensorServer:
             for ws in list(self.clients):
                 try:
                     await ws.send(message)
+                    print("Wysylam pakiet do klienta")
                 except websockets.ConnectionClosed:
                     self.clients.remove(ws)
             # Odczyt wykonywany co pol sekundy
@@ -130,6 +141,9 @@ class SensorServer:
         # Startujemy watek czujnika tetna
         self.hrm.start_sensor()
         try:
+            print(
+                f"WebSocket uruchomiony na {self.ip_address}, wifi: {self.wifi_ssid}"
+            )
             async with websockets.serve(self.handler, self.host, self.port):
                 await self.broadcast()
         finally:
