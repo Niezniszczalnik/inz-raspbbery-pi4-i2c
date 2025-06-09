@@ -80,7 +80,7 @@ class SensorServer:
             )
             await websocket.send(info)
             await websocket.wait_closed()
-                    finally:
+        finally:
             self.clients.remove(websocket)
 
     def read_sensors(self):
