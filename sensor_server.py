@@ -131,8 +131,6 @@ class SensorServer:
             gas_resistance = None
 
         data = {
-
-        data = {
             "timestamp": timestamp,
             "hr": hr,
             "spo2": spo2,
