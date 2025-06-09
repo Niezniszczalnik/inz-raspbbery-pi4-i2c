@@ -151,12 +151,15 @@ class SensorServer:
         while True:
             data = self.read_sensors()
             message = json.dumps(data)
-            for ws in list(self.clients):
-                try:
-                    await ws.send(message)
-                    print("Wysylam pakiet do klienta")
-                except websockets.ConnectionClosed:
-                    self.clients.remove(ws)
+            if self.clients:
+                print(f"Wysylam pakiet do {len(self.clients)} klientow")
+                for ws in list(self.clients):
+                    try:
+                        await ws.send(message)
+                    except websockets.ConnectionClosed:
+                        self.clients.remove(ws)
+            else:
+                print("Brak klientow - pakiet nie wyslany")
             # Odczyt wykonywany co pol sekundy
             await asyncio.sleep(0.5)
 
